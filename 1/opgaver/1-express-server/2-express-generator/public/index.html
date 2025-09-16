@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Vejrdata fra wttr.in</title>
+</head>
+<body>
+    <h1>Vejrdata</h1>
+    <!-- Existing elements -->
+    <input type="text" id="city" placeholder="By" value="Copenhagen">
+    <button id="getWeather">Hent vejr</button>
+    <div id="weatherResult"></div>
+
+    <!-- New elements -->
+    <input type="text" id="cities" placeholder="Byer kommasepareret" value="Copenhagen,Aarhus,Odense">
+    <button id="getWeathers">Hent vejr for flere byer</button>
+    <div id="weathersResult"></div>
+
+    <script>
+        document.getElementById('getWeather').addEventListener('click', async () => {
+            const city = document.getElementById('city').value;
+            const start = new Date();
+            console.log('Client start:', start.toISOString());
+
+            const res = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+            const data = await res.json();
+
+            const end = new Date();
+            console.log('Client slut:', end.toISOString());
+            console.log('Client tid (ms):', end - start);
+
+            const current = data.current_condition[0];
+            document.getElementById('weatherResult').innerHTML = `
+                <p><strong>Temperatur:</strong> ${current.temp_C} °C</p>
+                <p><strong>Vejr:</strong> ${current.weatherDesc[0].value}</p>
+                <p><strong>Vind:</strong> ${current.windspeedKmph} km/t</p>
+            `;
+        });
+    </script>
+</body>
+</html>
